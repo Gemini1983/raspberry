@@ -3,6 +3,9 @@
 import sys
 import time
 import datetime
+import sys, os
+
+path_project=os.path.abspath(os.path.dirname(sys.argv[0]))
 
 
 print ('*****************************')
@@ -27,7 +30,7 @@ print("Apertura saracinesca numero: "+sys.argv[1])
 print("Minuti apertura : "+sys.argv[2])
 
 def draw_states():
-    image = Image.open("/home/pi/example/automation-hat/examples/hat-mini/images/clean.jpg")
+    image = Image.open(path_project+'/images/clean.jpg')
     draw = ImageDraw.Draw(image)
 
     # use a truetype font
@@ -46,7 +49,7 @@ def draw_states():
     disp.display(image)
 
 def draw_states_clean():
-    image = Image.open("/home/pi/example/automation-hat/examples/hat-mini/images/clean.jpg")
+    image = Image.open(path_project+'/images/clean.jpg')
     disp.display(image)
 
 

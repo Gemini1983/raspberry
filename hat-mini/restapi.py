@@ -1,12 +1,21 @@
 # using flask_restful
+from tasks import get_tasks, up_task, new_task, del_task, find_task_comment,find_tasks_valve
 from flask import Flask, jsonify, request
 from flask_restful import Resource, Api
 import sys
 import os
+import configparser
+
+config = configparser.ConfigParser()
+config.read('config.ini')
+
+
+
+
 path_project = os.path.abspath(os.path.dirname(sys.argv[0]))
 
 # creating the flask app
-app = Flask(__name__)
+app = Flask("Valve")
 # creating an API object
 api = Api(app)
 
@@ -16,14 +25,15 @@ api = Api(app)
 # other methods include put, delete, etc.
 
 
-class Hello(Resource):
+class Get_valves(Resource):
 
     # corresponds to the GET request.
     # this function is called whenever there
     # is a GET request for this resource
     def get(self):
-
-        return jsonify({'message': 'hello world'})
+        host = config['valves']
+        result=get_tasks()
+        return jsonify(get_tasks())
 
     # Corresponds to POST request
     def post(self):
@@ -59,7 +69,7 @@ class Square(Resource):
 
 
 # adding the defined resources along with their corresponding urls
-api.add_resource(Hello, '/')
+api.add_resource(Get_valves, '/valves')
 api.add_resource(Square, '/square/<int:num>')
 api.add_resource(Delete, '/delete/')
 api.add_resource(Createcron, '/createcron/saracinesca/<string:saracinesca>/tempo/<string:tempo>/ora/<string:ora>/minuti/<string:minuti>')

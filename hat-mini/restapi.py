@@ -61,20 +61,25 @@ class Valve(Resource):
                  }
         return jsonify(valve)
     
+    # GET VALVES/{id}/?stato=<chiusa/aperta>&tempo=<secondiaperta>
     def post(self, id_valvola):
         stato_richiesto = request.args.get('stato')
+        tempo = request.args.get('tempo')
         stato_presente=statePIN(id_valvola)
-        
-        print(stato_richiesto)
-        print(stato_presente)
         if not stato_richiesto:
             return '',400
+        
         if stato_richiesto == 'aperta' and stato_presente == 'chiusa':
-            os.system(path_project+"/apri_saracinesca_tempo.py 1")
+            if not tempo:
+                os.system(path_project+"/apri_saracinesca_tempo.py "+id_valvola)
+                return '',201
+            else:
+                os.system(path_project+"/apri_saracinesca_tempo.py "+id_valvola+" "+tempo+" &")
+                return '',201                
+        if stato_richiesto == 'chiusa' and stato_presente == 'aperta':
+            os.system(path_project+"/chiudi_saracinesca.py "+id_valvola)
             return '',201
-        else:
-            return '',405
-
+        return '',200
 
 
 class Task_list(Resource):

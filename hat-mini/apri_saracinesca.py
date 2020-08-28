@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 
-import sys
 import time
 import datetime
 import sys, os
@@ -12,6 +11,7 @@ print ('*****************************')
 
 nmb_saracinesca=sys.argv[1]
 time_open=int(sys.argv[2])
+id=sys.argv[3]
 
 import automationhat
 time.sleep(0.1) # Short pause after ads1015 class creation recommended
@@ -28,6 +28,7 @@ import ST7735 as ST7735
 
 print("Apertura saracinesca numero: "+sys.argv[1])
 print("Minuti apertura : "+sys.argv[2])
+print("Identificativo task : "+sys.argv[3])
 
 def draw_states():
     image = Image.open(path_project+'/images/clean.jpg')
@@ -85,7 +86,7 @@ print("Apertura alle: ",datetime.datetime.now())
 automationhat.output[int(nmb_saracinesca)-1].write(1)
 draw_states()
 time.sleep(time_open)
-automationhat.output[0].write(0)
+automationhat.output[int(nmb_saracinesca)-1].write(0)
 draw_states_clean()
 
 print("Chiusura alle: ",datetime.datetime.now())

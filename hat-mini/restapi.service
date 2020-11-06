@@ -1,0 +1,12 @@
+[Unit]
+Description=Rest api elettrovalvole
+After=multi-user.target
+
+[Service]
+ExecStart=/home/raspberry/hat-mini/restapi.py
+WorkingDirectory=/home/raspberry/hat-mini
+User=pi
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

@@ -60,26 +60,32 @@ class Valve(Resource):
                  "stato": statePIN(id_valvola)
                  }
         return jsonify(valve)
-    
+
     # GET VALVES/{id}/?stato=<chiusa/aperta>&tempo=<secondiaperta>
     def post(self, id_valvola):
         stato_richiesto = request.args.get('stato')
         tempo = request.args.get('tempo')
-        stato_presente=statePIN(id_valvola)
+        stato_presente = statePIN(id_valvola)
         if not stato_richiesto:
-            return '',400
-        
+            return '', 400
+
         if stato_richiesto == 'aperta' and stato_presente == 'chiusa':
             if not tempo:
-                os.system(path_project+"/apri_saracinesca_tempo.py "+id_valvola)
-                return '',201
+                pid=os.fork()
+                if pid==0: # new process
+                    os.system("nohup "+ path_project +"/apri_saracinesca_tempo.py "+ id_valvola +" &")
+                    exit()
+                return '', 201
             else:
-                os.system(path_project+"/apri_saracinesca_tempo.py "+id_valvola+" "+tempo+" &")
-                return '',201                
+                pid=os.fork()
+                if pid==0: # new process
+                    os.system("nohup "+ path_project +"/apri_saracinesca_tempo.py "+ id_valvola +" "+tempo+" &")
+                    exit()
+                return '', 201
         if stato_richiesto == 'chiusa' and stato_presente == 'aperta':
             os.system(path_project+"/chiudi_saracinesca.py "+id_valvola)
-            return '',201
-        return '',200
+            return '', 201
+        return '', 200
 
 
 class Task_list(Resource):
@@ -138,12 +144,12 @@ class Task(Resource):
         # ricercare il task prima
         if find_a_task(id_valvola, id_task):
             task = request.get_json(force=True)
-            result = up_task(task,id_valvola,id_task)
+            result = up_task(task, id_valvola, id_task)
             if result:
                 print("aggiornato")
                 return (result), 201
             else:
-                return ('', 400)  
+                return ('', 400)
         else:
             return ('', 404)
 
@@ -153,7 +159,6 @@ api.add_resource(Valve_list, '/valves/')
 api.add_resource(Valve, '/valves/<string:id_valvola>/')
 api.add_resource(Task_list, '/valves/<string:id_valvola>/tasks/')
 api.add_resource(Task, '/valves/<string:id_valvola>/tasks/<string:id_task>/')
-
 
 
 # driver function

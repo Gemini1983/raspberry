@@ -15,19 +15,8 @@ if len(sys.argv) > 2:
 else:
     tempo_apertura=int(config['definition']['default_apertura_manuale'])
     
-#time.sleep(tempo_apertura)
-#automationhat.output[int(id_valvola)-1].write(0)
-
-
-print('Signal handler called with signal')
-# Set the signal handler and a 5-second alarm
-signal.signal(signal.SIGALRM, handler)
-signal.alarm(10)
-
-
-def handler(signum, frame):
-    print('Signal handler called with signal', signum)
-    automationhat.output[int(id_valvola)-1].write(0)
+time.sleep(tempo_apertura)
+automationhat.output[int(id_valvola)-1].write(0)
 
 
 

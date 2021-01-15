@@ -3,8 +3,9 @@
 # using flask_restful
 from tasks import get_tasks, up_task, new_task, del_task, find_task_comment, find_tasks_valve, find_a_task
 from gpio import statePIN
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request,render_template
 from flask_restful import Resource, Api
+from flask_cors import CORS
 import sys
 import os
 import configparser
@@ -17,8 +18,12 @@ path_project = os.path.abspath(os.path.dirname(sys.argv[0]))
 
 # creating the flask app
 app = Flask("Valve")
+
+CORS(app, resources={r"/*": {"origins": "*"}})
 # creating an API object
 api = Api(app)
+
+
 
 # making a class for a particular resource
 # the get, post methods correspond to get and post requests
@@ -61,7 +66,7 @@ class Valve(Resource):
                  }
         return jsonify(valve)
 
-    # GET VALVES/{id}/?stato=<chiusa/aperta>&tempo=<secondiaperta>
+    # POST VALVES/{id}/?stato=<chiusa/aperta>&tempo=<secondiaperta>
     def post(self, id_valvola):
         stato_richiesto = request.args.get('stato')
         tempo = request.args.get('tempo')
@@ -117,10 +122,11 @@ class Task(Resource):
     # GET VALVES/{id}/tasks/{id}
     # DELETE VALVES/{id}/tasks/{id}
     # UPDATE VALVES/{id}/tasks/{id}
-
-    # Ritorna un task di una valvola
+         
+    # Ritorna un task di una valvola      
     def get(self, id_valvola, id_task):
         print("catturato dalla get 2")
+        print(request.method)
         if find_a_task(id_valvola, id_task):
             return (find_a_task(id_valvola, id_task), 200)
         else:
@@ -155,10 +161,14 @@ class Task(Resource):
 
 
 # adding the defined resources along with their corresponding urls
-api.add_resource(Valve_list, '/valves/')
-api.add_resource(Valve, '/valves/<string:id_valvola>/')
-api.add_resource(Task_list, '/valves/<string:id_valvola>/tasks/')
-api.add_resource(Task, '/valves/<string:id_valvola>/tasks/<string:id_task>/')
+api.add_resource(Valve_list, '/api/valves/')
+api.add_resource(Valve, '/api/valves/<string:id_valvola>/')
+api.add_resource(Task_list, '/api/valves/<string:id_valvola>/tasks/')
+api.add_resource(Task, '/api/valves/<string:id_valvola>/tasks/<string:id_task>/')
+
+@app.route('/', methods=['GET'])
+def root():
+    return render_template('index.html') # Return index.html 
 
 
 # driver function
